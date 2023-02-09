@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import api from '../api';
-
+import SearchStatus from "./searchStatus";
 const Users = () => {
     const [users, setUsers] = useState(api.users.fetchAll());
 
@@ -9,7 +9,6 @@ const Users = () => {
         setUsers(users.filter((user) => user._id !== userId))
 
     }
-
     const renderPhrase = (number) => {
         const lastOne = Number(number.toString().slice(-1));
         if (number > 4 && number < 15) return "человек тусанет";
@@ -18,6 +17,18 @@ const Users = () => {
         return "человек тусанет";
     }
 
+
+    const Bookmark = (id) => {
+        setUsers(users.map(el => {
+            if(el._id === id && !el.bookmark){
+                el.bookmark = true
+            } else if (el._id === id && el.bookmark){
+                el.bookmark = false
+
+            }
+            return el
+        }))
+    }
 
     return (
         <>
@@ -40,6 +51,7 @@ const Users = () => {
                         <th scope="col">Профессия</th>
                         <th scope="col">Встретился, раз</th>
                         <th scope="col">Оценка</th>
+                        <th scope="col">Избранное</th>
                         <th />
                     </tr>
                     </thead>
@@ -57,6 +69,14 @@ const Users = () => {
                             <td>{user.profession.name}</td>
                             <td>{user.completedMeetings}</td>
                             <td>{user.rate} /5</td>
+                            <td>
+                                <button
+                                    className= {"bi " + (user.bookmark ? "bi-flag-fill" : "bi-flag")}
+                                    onClick={()=> Bookmark(user._id)}
+                                >
+
+                                </button>
+                            </td>
                             <td>
                                 <button
                                     onClick={() => handleDelete(user._id)}
