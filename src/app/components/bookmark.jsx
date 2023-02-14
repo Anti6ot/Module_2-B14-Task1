@@ -1,14 +1,14 @@
+import React from 'react'
+import PropTypes from 'prop-types'
 
-const Bookmark = (id, users) => {
-
-    return (users.map(el => {
-        if(el._id === id && !el.bookmark){
-            el.bookmark = true
-        } else if (el._id === id && el.bookmark){
-            el.bookmark = false
-        }
-        return el
-    }))
+const BookMark = ({ status, ...rest }) => {
+    return (
+        <button {...rest}>
+            <i className={'bi bi-bookmark' + (status ? '-heart-fill' : '')}></i>
+        </button>
+    )
 }
-
-export default Bookmark
+BookMark.propTypes = {
+    status: PropTypes.bool.isRequired
+}
+export default BookMark

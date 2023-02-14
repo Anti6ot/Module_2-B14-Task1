@@ -1,34 +1,44 @@
-import Qualitie from "./qualitie";
-import Bookmark from "./bookmark";
-import React, {useState} from "react";
-
-const User = (props) => {
-    const {onUser, onUsers, onDel} = props
-    const [users, setUsers] = useState(onUsers)
-    return (<>
-            <td>{onUser.name}</td>
-            <td>{Qualitie(onUser.qualities)}</td>
-            <td>{onUser.profession.name}</td>
-            <td>{onUser.completedMeetings}</td>
-            <td>{onUser.rate} /5</td>
+import React from 'react'
+import Qualitie from './qualitie'
+import BookMark from './bookmark'
+const User = ({
+    _id,
+    name,
+    qualities,
+    profession,
+    completedMeetings,
+    rate,
+    onDelete,
+    bookmark,
+    onToggleBookMark
+}) => {
+    return (
+        <tr>
+            <td>{name}</td>
             <td>
-
-                <button
-                className= {"bi " + (onUser.bookmark ? "bi-flag-fill" : "bi-flag")}
-                onClick={()=> setUsers(Bookmark(onUser._id, users))
-                }
-            >
-            </button>
+                {qualities.map((qual) => (
+                    <Qualitie key={qual._id} {...qual} />
+                ))}
+            </td>
+            <td>{profession.name}</td>
+            <td>{completedMeetings}</td>
+            <td>{rate} /5</td>
+            <td>
+                <BookMark
+                    status={bookmark}
+                    onClick={() => onToggleBookMark(_id)}
+                />
             </td>
             <td>
                 <button
-                    onClick={() => onDel(onUser._id)}
+                    onClick={() => onDelete(_id)}
                     className="btn btn-danger"
                 >
                     delete
                 </button>
             </td>
-    </>
+        </tr>
     )
 }
+
 export default User
