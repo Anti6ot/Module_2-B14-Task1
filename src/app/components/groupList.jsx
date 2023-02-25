@@ -1,14 +1,14 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-const GroupList = ({
+const GroupList = ({ // в качестве параметров professions из users.jsx и доп параметры ид и имя и тд.
     items,
     valueProperty,
     contentProperty,
     onItemSelect,
     selectedItem
-}) => { // в качестве параметров professions из users.jsx и доп параметры ид и имя и тд.
-    const getArray = (items) => {
+}) => {
+    const getArray = (items) => { // проверка items на массив (если это объект то возвращиет значения)
         return Array.isArray(items) ? items : Object.values(items);
     };
 
@@ -20,7 +20,7 @@ const GroupList = ({
                     className={
                         "list-group-item" + (item === selectedItem ? " active" : "")
                     }
-                    onClick={() => onItemSelect(item)}
+                    onClick={() => onItemSelect(item)} // передаем выбранную проффесию
                     role='button'
                 >
                     {item[contentProperty]}
@@ -28,22 +28,6 @@ const GroupList = ({
             ))}
         </ul>
     );
-    // return (
-    //     <>
-    //         <ul className="list-group">
-    //             {Object.keys(items).map(item => ( // итерируемся по ключам объекта и рендерим данные\
-    //                 <li
-    //                     key={items[item][valueProperty]}
-    //                     className={"list-group-item" + (items[item] === selectedItem ? " active" : "")}
-    //                     onClick={() => onItemSelect(items[item])}
-    //                     role="button" // эффект смены курсора
-    //                 >
-    //                     {items[item][contentProperty]}
-    //                 </li>
-    //             ))}
-    //         </ul>
-    //     </>
-    // );
 };
 
 GroupList.defaultProps = { // с помощью встроенного в реакт свойства можно задать параметры по умолчанию входящии в GroupList()

@@ -8,10 +8,10 @@ import GroupList from "./groupList";
 import SearchStatus from "./searchStatus";
 
 const Users = ({ users: allUsers, ...rest }) => {
-    const [currentPage, setCurrentPage] = useState(1);
+    const [currentPage, setCurrentPage] = useState(1); // на какой странице сейчас нахожимся
     const [professions, setProfession] = useState();// создаем пустой массив с помощью хука и далее в useEffect получаем ассинхронный запрос и добавляем его в массив
-    const [selectedProf, setSelectedProf] = useState();
-    const pageSize = 4;
+    const [selectedProf, setSelectedProf] = useState(); // выбранная проффесия
+    const pageSize = 4; // отображает количество персон на одной странице
 
     useEffect(() => {
         api.professions.fetchAll().then((data) => { setProfession(data); }); // get async request & add in arr professions
@@ -29,7 +29,7 @@ const Users = ({ users: allUsers, ...rest }) => {
     };
     const usersFilter = // фильтруем юзеров. принажатом фильтре
         selectedProf
-            ? allUsers.filter((user) => user.profession === selectedProf) // в фильтре Сравниваем проффес. юзеров. с выбранной проффес.
+            ? allUsers.filter((user) => JSON.stringify(user.profession) === JSON.stringify(selectedProf)) // в фильтре Сравниваем проффес. юзеров. с выбранной проффес.
             : allUsers;
     const count = usersFilter.length;
     const usersCrop = paginate(usersFilter, currentPage, pageSize); // получаем массив obj с помощью метода в utils для отображения отфильтрованных юзеров.
@@ -57,7 +57,7 @@ const Users = ({ users: allUsers, ...rest }) => {
                 </div>
             )}
             <div className="d-flex flex-column">
-                <SearchStatus length={count} />
+                <SearchStatus length={count} />  {/* показывает колич.Людей которые тусанут */}
                 {count > 0 && (
                     <table className="table">
                         <thead>
@@ -72,7 +72,7 @@ const Users = ({ users: allUsers, ...rest }) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {usersCrop.map((user) => (
+                            {usersCrop.map((user) => ( // рендерит тот самы массив объектов
                                 <User {...rest} {...user} key={user._id} />
                             ))}
                         </tbody>
