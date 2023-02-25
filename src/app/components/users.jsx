@@ -14,9 +14,8 @@ const Users = ({ users: allUsers, ...rest }) => {
     const pageSize = 4;
 
     useEffect(() => {
-        api.professions.fetchAll().then((data) => setProfession(data)); // get async request & add in arr professions
+        api.professions.fetchAll().then((data) => { setProfession(data); }); // get async request & add in arr professions
     }, []);
-
     useEffect(() => { // следим за состоянием selectedProf, если была изменена т.е.(выбрана какая либо профф) то переводит на начал.страницу (1)
         setCurrentPage(1);
     }, [selectedProf]);
