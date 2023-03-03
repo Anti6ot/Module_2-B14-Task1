@@ -1,24 +1,47 @@
 import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
 import { paginate } from "../utils/paginate";
 import Pagination from "./pagination";
-import User from "./user";
 import api from "../api";
 import GroupList from "./groupList";
 import SearchStatus from "./searchStatus";
+import UserTable from "./usersTable";
+import _ from "lodash";
+import PropTypes from "prop-types";
 
-const Users = ({ users: allUsers, ...rest }) => {
+const Users = () => {
     const [currentPage, setCurrentPage] = useState(1); // на какой странице сейчас нахожимся
     const [professions, setProfession] = useState();// создаем пустой массив с помощью хука и далее в useEffect получаем ассинхронный запрос и добавляем его в массив
-    const [selectedProf, setSelectedProf] = useState(); // выбранная проффесия
-    const pageSize = 4; // отображает количество персон на одной странице
+    const [selectedProf, setSelectedProf] = useState(); // выбранная профеcсия
+    const [sortBy, setSortBy] = useState({ iter: "name", order: "asc" });
+    const [users, setUsers] = useState(); // оставляем пустым для useEffect который получает ассинх.запрос
+
+    const pageSize = 8; // отображает количество персон на одной странице
 
     useEffect(() => {
         api.professions.fetchAll().then((data) => { setProfession(data); }); // get async request & add in arr professions
     }, []);
+
     useEffect(() => { // следим за состоянием selectedProf, если была изменена т.е.(выбрана какая либо профф) то переводит на начал.страницу (1)
         setCurrentPage(1);
     }, [selectedProf]);
+
+    useEffect(() => {
+        api.users.fetchAll().then((data) => setUsers(data)); // получаем ассинхронный запрос и добавляем в users
+    }, []);
+
+    const handleDelete = (userId) => {
+        setUsers(users.filter((user) => user._id !== userId));
+    };
+    const handleToggleBookMark = (id) => {
+        setUsers(
+            users.map((user) => {
+                if (user._id === id) {
+                    return { ...user, bookmark: !user.bookmark };
+                }
+                return user;
+            })
+        );
+    };
 
     const handleProfessionSelect = item => {
         setSelectedProf(item);
@@ -27,69 +50,67 @@ const Users = ({ users: allUsers, ...rest }) => {
     const handlePageChange = (pageIndex) => {
         setCurrentPage(pageIndex);
     };
-    const usersFilter = // фильтруем юзеров. принажатом фильтре
-        selectedProf
-            ? allUsers.filter((user) => JSON.stringify(user.profession) === JSON.stringify(selectedProf)) // в фильтре Сравниваем проффес. юзеров. с выбранной проффес.
-            : allUsers;
-    const count = usersFilter.length;
-    const usersCrop = paginate(usersFilter, currentPage, pageSize); // получаем массив obj с помощью метода в utils для отображения отфильтрованных юзеров.
-
-    const clearFilter = () => { // сбрасывает значение в фильтре (кнопка очистить)
-        setSelectedProf();
+    const handleSort = (item) => {
+        setSortBy(item);
     };
 
-    return (
-        <div className="d-flex">
-            {/* передаём groupList параметры (проффессии, ид, имя), также создали условие чтоы не получать undefined от ассин. запроса */}
-            {professions && (
-                <div className="d-flex flex-column flex-shrink-0 p-3">
-                    <GroupList
-                        selectedItem={selectedProf}
-                        items={professions}
-                        onItemSelect={handleProfessionSelect} // передаем метод который устанав.знач. в setCurrentPage
-                    />
-                    <button
-                        className="btn btn-secondary mt-2"
-                        onClick={clearFilter}
-                    >
-                        Очистить
-                    </button>
-                </div>
-            )}
-            <div className="d-flex flex-column">
-                <SearchStatus length={count} />  {/* показывает колич.Людей которые тусанут */}
-                {count > 0 && (
-                    <table className="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">Имя</th>
-                                <th scope="col">Качества</th>
-                                <th scope="col">Провфессия</th>
-                                <th scope="col">Встретился, раз</th>
-                                <th scope="col">Оценка</th>
-                                <th scope="col">Избранное</th>
-                                <th />
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {usersCrop.map((user) => ( // рендерит тот самы массив объектов
-                                <User {...rest} {...user} key={user._id} />
-                            ))}
-                        </tbody>
-                    </table>
+    if (users) {
+        const usersFilter = // фильтруем юзеров. принажатом фильтре
+            selectedProf
+                ? users.filter((user) => JSON.stringify(user.profession) === JSON.stringify(selectedProf)) // в фильтре Сравниваем проффес. юзеров. с выбранной проффес.
+                : users;
+        const count = usersFilter.length;
+        const sortedUsers = _.orderBy(usersFilter, [sortBy.path], [sortBy.order]); // сортировка по параметрам
+        const usersCrop = paginate(sortedUsers, currentPage, pageSize); // получаем массив obj с помощью метода в utils для отображения отфильтрованных юзеров.
+
+        const clearFilter = () => { // сбрасывает значение в фильтре (кнопка очистить)
+            setSelectedProf();
+        };
+
+        return (
+            <div className="d-flex">
+                {/* передаём groupList параметры (проффессии, ид, имя), также создали условие чтоы не получать undefined от ассин. запроса */}
+                {professions && (
+                    <div className="d-flex flex-column flex-shrink-0 p-3">
+                        <GroupList
+                            selectedItem={selectedProf}
+                            items={professions}
+                            onItemSelect={handleProfessionSelect} // передаем метод который устанав.знач. в setCurrentPage
+                        />
+                        <button
+                            className="btn btn-secondary mt-2"
+                            onClick={clearFilter}
+                        >
+                            Очистить
+                        </button>
+                    </div>
                 )}
-                <div className="d-flex justify-content-center">
-                    <Pagination // в компонент передаем параметры
-                        itemsCount={count}
-                        pageSize={pageSize}
-                        currentPage={currentPage}
-                        onPageChange={handlePageChange}
-                    />
+                <div className="d-flex flex-column">
+                    <SearchStatus length={count} />  {/* показывает колич.Людей которые тусанут */}
+                    {count > 0 && (
+                        <UserTable
+                            users={usersCrop}
+                            onSort={handleSort}
+                            selectedSort={sortBy}
+                            onDelete={handleDelete}
+                            onToggleBookMark={handleToggleBookMark}
+                        />
+                    )}
+                    <div className="d-flex justify-content-center">
+                        <Pagination // в компонент передаем параметры
+                            itemsCount={count}
+                            pageSize={pageSize}
+                            currentPage={currentPage}
+                            onPageChange={handlePageChange}
+                        />
+                    </div>
                 </div>
             </div>
-        </div>
-    );
+        );
+    }
+    return "loading...";
 };
+
 Users.propTypes = {
     users: PropTypes.array
 };
