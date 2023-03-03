@@ -4,7 +4,7 @@ import Table from "./table";
 import BookMark from "./bookmark";
 import QualitiesList from "./qualitiesList";
 
-const UserTable = ({ users, onSort, selectedSort, onToggleBookMark, onDelete, ...rest }) => {
+const UserTable = ({ users, onSort, selectedSort, onToggleBookMark, onDelete }) => {
     const columns = { // устанавливаем параметры чтобы в tableHeadr отображать их динамически
         name: { path: "name", name: "Имя" },
         qualities: { name: "Качества", component: (user) => (<QualitiesList qualities={user.qualities} />) },
@@ -15,7 +15,7 @@ const UserTable = ({ users, onSort, selectedSort, onToggleBookMark, onDelete, ..
             path: "bookmark",
             name: "Избранное",
             component: (user) => (
-                <BookMark
+                <BookMark // вставляем компонент как метод в columns
                     status={user.bookmark}
                     onClick={() => onToggleBookMark(user._id)}
                 />

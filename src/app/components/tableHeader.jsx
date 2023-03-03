@@ -13,6 +13,17 @@ const TableHeader = ({ onSort, selectedSort, columns }) => {
         }
     };
 
+    const classNameSort = (item) => {
+        if (selectedSort.order === "desc" && selectedSort.path === item) {
+            return " bi-caret-up-fill";
+        }
+        if (selectedSort.order === "asc" && selectedSort.path === item) {
+            return " bi-caret-down-fill";
+        } else {
+            return null;
+        }
+    };
+
     return (
         <thead>
             <tr>
@@ -26,6 +37,7 @@ const TableHeader = ({ onSort, selectedSort, columns }) => {
                         }
                         {...{ role: columns[column].path && "button" }}
                         scope="col"
+                        className={"bi" + classNameSort(columns[column].path)} // создаем класс иконки взависимости от выбранной колонки и атрибута order
                     >
                         {columns[column].name}
                     </th>
