@@ -8,10 +8,10 @@ const UserPage = ({ userId }) => {
     const history = useHistory();
     const [user, setUser] = useState();
     useEffect(() => {
-        api.users.getById(userId).then((data) => setUser(data));
+        api.users.getById(userId).then((data) => setUser(data)); // получаем юзера по id и помещаем его в масс. user
     });
     const handleOnClick = () => {
-        history.push("/users");
+        history.push("/users"); // по клику возвращаемся  в /users
     };
     if (user) {
         return (

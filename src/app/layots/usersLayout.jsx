@@ -5,7 +5,7 @@ import UserPage from "../components/userPage";
 
 const UsersLayout = () => {
     const params = useParams();
-    const { userId } = params;
+    const { userId } = params; // встроенный хук для получения параметров
 
     return (
         <div>

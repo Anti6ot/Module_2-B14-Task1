@@ -12,7 +12,7 @@ function App() {
             <Switch>
                 <Route path="/main" component={Main} />
                 <Route path="/login" component={Login} />
-                <Route path="/users/:userId?" component={UsersLayout} />{/* render={(props) => < UsersLayout {...props} />} */}
+                <Route path="/users/:userId?" component={UsersLayout} />{/* получаем url в path и направляем на компонент  */}
                 <Redirect to='/' />
             </Switch>
         </>
