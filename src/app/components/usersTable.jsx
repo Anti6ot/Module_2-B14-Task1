@@ -3,10 +3,11 @@ import PropTypes from "prop-types";
 import Table from "./table";
 import BookMark from "./bookmark";
 import QualitiesList from "./qualitiesList";
+import { Link } from "react-router-dom";
 
 const UserTable = ({ users, onSort, selectedSort, onToggleBookMark, onDelete }) => {
     const columns = { // устанавливаем параметры чтобы в tableHeadr отображать их динамически
-        name: { path: "name", name: "Имя" },
+        name: { path: "name", name: "Имя", component: (user) => <Link to={`/users/${user._id}`}>{user.name}</Link> }, // component: (user) => (<Link>{user.name}</Link>)
         qualities: { name: "Качества", component: (user) => (<QualitiesList qualities={user.qualities} />) },
         professions: { path: "profession.name", name: "Профессия" },
         completedMeetings: { path: "completedMeetings", name: "Встретились/раз" },
