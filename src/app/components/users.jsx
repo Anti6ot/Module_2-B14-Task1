@@ -9,12 +9,13 @@ import _ from "lodash";
 import PropTypes from "prop-types";
 
 const Users = () => {
-    const [currentPage, setCurrentPage] = useState(1); // на какой странице сейчас нахожимся
+    const [currentPage, setCurrentPage] = useState(1); // на какой странице сейчас находимся
     const [professions, setProfession] = useState();// создаем пустой массив с помощью хука и далее в useEffect получаем ассинхронный запрос и добавляем его в массив
     const [selectedProf, setSelectedProf] = useState(); // выбранная профеcсия
     const [sortBy, setSortBy] = useState({ iter: "name", order: "asc" });
     const [users, setUsers] = useState(); // оставляем пустым для useEffect который получает ассинх.запрос
-
+    // ====
+    const [searchQuery, setSearchQuery] = useState(""); // input
     const pageSize = 8; // отображает количество персон на одной странице
 
     useEffect(() => {
@@ -44,6 +45,9 @@ const Users = () => {
     };
 
     const handleProfessionSelect = item => {
+        if (searchQuery !== "") {
+            setSearchQuery("");
+        };
         setSelectedProf(item);
     };
 
@@ -53,12 +57,19 @@ const Users = () => {
     const handleSort = (item) => {
         setSortBy(item);
     };
+    // ==============================
+    const handleSearchQuery = (e) => {
+        setSelectedProf(undefined);
+        setSearchQuery((e.target.value));
+    };
 
     if (users) {
         const usersFilter = // фильтруем юзеров. принажатом фильтре
-            selectedProf
-                ? users.filter((user) => JSON.stringify(user.profession) === JSON.stringify(selectedProf)) // в фильтре Сравниваем проффес. юзеров. с выбранной проффес.
-                : users;
+            searchQuery // при условии если у нас в поиске есть значения то ...
+                ? users.filter((user) => user.name.toLowerCase().includes(searchQuery.toLowerCase())) // фильтруем пользователей
+                : selectedProf
+                    ? users.filter((user) => JSON.stringify(user.profession) === JSON.stringify(selectedProf)) // в фильтре Сравниваем проффес. юзеров. с выбранной проффес.
+                    : users;
         const count = usersFilter.length;
         const sortedUsers = _.orderBy(usersFilter, [sortBy.path], [sortBy.order]); // сортировка по параметрам
         const usersCrop = paginate(sortedUsers, currentPage, pageSize); // получаем массив obj с помощью метода в utils для отображения отфильтрованных юзеров.
@@ -87,6 +98,8 @@ const Users = () => {
                 )}
                 <div className="d-flex flex-column">
                     <SearchStatus length={count} />  {/* показывает колич.Людей которые тусанут */}
+                    <input type="text" name="Search" value={searchQuery} onChange={handleSearchQuery} placeholder="search" />
+
                     {count > 0 && (
                         <UserTable
                             users={usersCrop}
