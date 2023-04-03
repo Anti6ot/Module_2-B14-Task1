@@ -5,9 +5,9 @@ import SelectField from "../../common/form/selectField";
 import RadioField from "../../common/form/radioField";
 import MultiSelectField from "../../common/form/multiSelectField";
 import { validator } from "../../../utils/validator";
-// import PropTypes from "prop-types";
 import { useParams, useHistory } from "react-router-dom";
 
+// НАСТРОИТЬ ВАЛИДАЦИЮ И СДЕЛАТЬ ПЕРЕИСПОЛЬЗУЕМЫЙ КОМПОНЕНТ
 const UserEdit = () => {
     const { userId } = useParams();
     const history = useHistory();
@@ -113,6 +113,11 @@ const UserEdit = () => {
                 message:
                     "Вы не можете использовать наш сервис без подтверждения лицензионного соглашения"
             }
+        },
+        name: {
+            isRequired: {
+                message: "Имя не может быть пустым"
+            }
         }
     };
     useEffect(() => {
@@ -140,60 +145,65 @@ const UserEdit = () => {
     };
     return (
         <>
-            {user._id && professions && qualities && (
-                <form onSubmit={handleSubmit}>
-                    <TextField
-                        label="Электронная почта"
-                        name="email"
-                        value={user.email}
-                        onChange={handleChange}
-                        error={errors.email}
-                    />
-                    <TextField
-                        label="Name"
-                        type="text"
-                        name="name"
-                        value={user.name}
-                        onChange={handleChange}
-                        error={errors.name}
-                    />
-                    <SelectField
-                        label="Выбери свою профессию"
-                        defaultOption="Choose..."
-                        options={professions}
-                        name="profession"
-                        onChange={handleChange}
-                        value={user.profession._id}
-                        error={errors.profession}
-                    />
-                    <RadioField
-                        options={[
-                            { name: "Male", value: "male" },
-                            { name: "Female", value: "female" },
-                            { name: "Other", value: "other" }
-                        ]}
-                        value={user.sex}
-                        name="sex"
-                        onChange={handleChange}
-                        label="Выберите ваш пол"
-                    />
-                    <MultiSelectField
-                        options={qualities}
-                        onChange={handleChange}
-                        defaultValue={user.qualities}
-                        name="qualities"
-                        label="Выберите ваши качества"
-                    />
-                    <button
-                        className="btn btn-primary w-100 mx-auto"
-                        type="submit"
-                        disabled={!isValid}
-                    >
-                        Submit
-                    </button>
-                </form>
-            )}
-
+            <div className="container mt-5">
+                <div className="row">
+                    <div className="col-md-6 offset-md-3 shadow p-4">
+                        {user._id && professions && qualities && (
+                            <form onSubmit={handleSubmit}>
+                                <TextField
+                                    label="Электронная почта"
+                                    name="email"
+                                    value={user.email}
+                                    onChange={handleChange}
+                                    error={errors.email}
+                                />
+                                <TextField
+                                    label="Name"
+                                    type="text"
+                                    name="name"
+                                    value={user.name}
+                                    onChange={handleChange}
+                                    error={errors.name}
+                                />
+                                <SelectField
+                                    label="Выбери свою профессию"
+                                    defaultOption="Choose..."
+                                    options={professions}
+                                    name="profession"
+                                    onChange={handleChange}
+                                    value={user.profession._id}
+                                    error={errors.profession}
+                                />
+                                <RadioField
+                                    options={[
+                                        { name: "Male", value: "male" },
+                                        { name: "Female", value: "female" },
+                                        { name: "Other", value: "other" }
+                                    ]}
+                                    value={user.sex}
+                                    name="sex"
+                                    onChange={handleChange}
+                                    label="Выберите ваш пол"
+                                />
+                                <MultiSelectField
+                                    options={qualities}
+                                    onChange={handleChange}
+                                    defaultValue={user.qualities}
+                                    name="qualities"
+                                    label="Выберите ваши качества"
+                                />
+                                <button
+                                    className="btn btn-primary w-100 mx-auto"
+                                    type="submit"
+                                    disabled={!isValid}
+                                >
+                                    Submit
+                                </button>
+                            </form>
+                        )}
+                    </div>
+                </div>
+            </div>
         </>
     );
 };
